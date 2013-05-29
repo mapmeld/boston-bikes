@@ -1,0 +1,21 @@
+html, body, #map{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: arial, sans-serif;
+}
+
+#overlay {
+  position:absolute;
+  top:20px;
+  right:10px;
+  border-radius: 10px;
+  background:#A9CFFF;
+  padding: 25px;
+  z-index:999;
+  overflow:auto;
+  width: 300px;
+  line-height: 180%;
+}
