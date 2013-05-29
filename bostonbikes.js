@@ -64,16 +64,16 @@ $.get("data/stations.csv", function(station_csv){
       orientation: "horizontal",
       range: "min",
       // min and max from when trips and station capacity CSVs overlap
-      min: 1 * ( new Date( "2011-08-22 04:08:00-04" ) ),
-      max: 1 * ( new Date( "2012-10-01 20:32:00-04" ) ),
-      value: 1 * ( new Date( "2011-08-22 00:08:00-04" ) ),
+      min: 1 * ( new Date( "2011/08/22 04:08:00-04" ) ),
+      max: 1 * ( new Date( "2012/10/01 20:32:00-04" ) ),
+      value: 1 * ( new Date( "2011/08/22 00:08:00-04" ) ),
       slide: function(event, ui){
         var dt = ui.value;
         updateView(dt);
       }
     });
     
-    updateView( 1 * ( new Date( "2011-08-22 00:08:00-04" ) ) );
+    updateView( 1 * ( new Date( "2011/08/22 00:08:00-04" ) ) );
     
   });
 });
