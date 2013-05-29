@@ -101,8 +101,8 @@ $.get("data/stations.csv", function(station_csv){
       var trips_data = $.csv.toArrays(trips_csv);
 
       for(var t=1;t<trips_data.length;t++){
-        var start = 1 * ( new Date( trips_data[t][3] ) );
-        var end = 1 * ( new Date( trips_data[t][5] ) );
+        var start = 1 * ( new Date( trips_data[t][3].replace("-","/").replace("-","/") ) );
+        var end = 1 * ( new Date( trips_data[t][5].replace("-","/").replace("-","/") ) );
         if(((start > dt_min) && (start < dt_max)) || ((end > dt_min) && (end < dt_max))){
           // notice this trip
           var trip_id = trips_data[t][0];
