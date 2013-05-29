@@ -64,7 +64,7 @@ $.get("data/stations.csv", function(station_csv){
     capacity_data = null;
     
     
-    var viewday = gup("day") || "2012-06-29";
+    var viewday = gup("day") || "6-29-2012";
     var dt_min = 1 * ( new Date( viewday + " 00:00:00-04" ) );
     var dt_max = 1 * ( new Date( viewday + " 23:59:59-04" ) );
     
@@ -83,7 +83,20 @@ $.get("data/stations.csv", function(station_csv){
     
     updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
     
-    $.get("data/trips.csv", function(trips_csv){
+    var csvday = viewday.split("-");
+    var year = csvday[2];
+    csvday[2] = csvday[1];
+    csvday[1] = csvday[0];
+    csvday[0] = year;
+    if(csvday[1].length == 1){
+      csvday[1] = "0" + csvday[1];
+    }
+    if(csvday[2].length == 1){
+      csvday[2] = "0" + csvday[2];
+    }
+    csvday = csvday.join("-");
+    
+    $.get("data/trips/" + csvday + ".csv", function(trips_csv){
       var trips_data = $.csv.toArrays(trips_csv);
 
       for(var t=1;t<trips_data.length;t++){
