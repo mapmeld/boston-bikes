@@ -19,3 +19,7 @@ html, body, #map{
   width: 300px;
   line-height: 180%;
 }
+
+.loading{
+  float: right;
+}

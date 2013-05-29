@@ -14,11 +14,11 @@ $.get("data/stations.csv", function(station_csv){
   for(var s=1;s<station_data.length;s++){
     //console.log(station_data[s]);
     var id = station_data[s][0];
-    var terminal = station_data[s][1];
+    //var terminal = station_data[s][1];
     var name = station_data[s][2];
-    var installed = (station_data[s][3] == "TRUE");
-    var locked = (station_data[s][4] == "TRUE");
-    var temporary = (station_data[s][5] == "TRUE");
+    //var installed = (station_data[s][3] == "TRUE");
+    //var locked = (station_data[s][4] == "TRUE");
+    //var temporary = (station_data[s][5] == "TRUE");
     var lat = 1.0 * station_data[s][6];
     var lng = 1.0 * station_data[s][7];
     
@@ -37,10 +37,13 @@ $.get("data/stations.csv", function(station_csv){
     };
   }
   
+  station_csv = null;
+  station_data = null;
+  
   $.get("data/stationcapacity.csv", function(capacity_csv){
     var capacity_data = $.csv.toArrays(capacity_csv);
     for(var s=1;s<capacity_data.length;s++){
-      var id = capacity_data[s][0];
+      //var id = capacity_data[s][0];
       var station_id = capacity_data[s][1];
       var date = new Date( capacity_data[s][2] );
       var count = 1 * capacity_data[s][3];
@@ -54,12 +57,14 @@ $.get("data/stations.csv", function(station_csv){
         });
       }
     }
+    capacity_csv = null;
+    capacity_data = null;
     
     $("#timeline").slider({
       orientation: "horizontal",
       range: "min",
       // min and max from when trips and station capacity CSVs overlap
-      min: 1 * ( new Date( "2011-08-22 00:08:00-04" ) ),
+      min: 1 * ( new Date( "2011-08-22 04:08:00-04" ) ),
       max: 1 * ( new Date( "2012-10-01 20:32:00-04" ) ),
       value: 1 * ( new Date( "2011-08-22 00:08:00-04" ) ),
       slide: function(event, ui){
@@ -76,6 +81,8 @@ $.get("data/stations.csv", function(station_csv){
 function updateView(dt){
 
   $("#day").text( moment(dt).format('MMMM D, YYYY') );
+  var myd = new Date(dt);
+  $("#shares").attr("href", "share.html?day=" + (myd.getMonth()+1) + "-" + myd.getDate() + "-" + myd.getFullYear() );
 
   for(station_id in stations){
     var count = lookUpCapacity(stations[ station_id ], dt);
