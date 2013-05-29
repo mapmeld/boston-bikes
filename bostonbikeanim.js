@@ -84,7 +84,7 @@ $.get("data/stations.csv", function(station_csv){
     
     updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
     
-    var csvday = viewday.split("-");
+    var csvday = viewday.split("/");
     var year = csvday[2];
     csvday[2] = csvday[1];
     csvday[1] = csvday[0];
