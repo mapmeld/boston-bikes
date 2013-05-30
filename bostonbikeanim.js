@@ -171,7 +171,7 @@ var sizeByCount = false;
 
 function updateView(dt){
 
-  $("#day").text( moment(dt + 4 * 60 * 60 * 1000 ).format('MMMM D, YYYY -- h:mm:ss a') );
+  $("#day").text( a.toDateString().substring(4) + " " + a.toTimeString().split(' ')[0] );
 
   for(station_id in stations){
     if(!sizedOnce){
