@@ -72,7 +72,7 @@ $.get("data/stations.csv", function(station_csv){
     capacity_data = null;
     
     
-    var viewday = gup("day") || "2012/04/25";
+    var viewday = gup("day") || "04-25-2012";
     viewday = viewday.replace("-","/").replace("-","/");
     dt_min = 1 * ( new Date( viewday + " 00:00:00 GMT-0400" ) );
     dt_max = 1 * ( new Date( viewday + " 23:59:59 GMT-0400" ) );
