@@ -10,6 +10,8 @@ map.attributionControl.setPrefix('');
 var stations = {};
 var trips = {};
 
+var dt_min, dt_max;
+
 $.get("data/stations.csv", function(station_csv){
   var station_data = $.csv.toArrays(station_csv);
   for(var s=1;s<station_data.length;s++){
@@ -27,16 +29,22 @@ $.get("data/stations.csv", function(station_csv){
     var g = (Math.round( Math.random() * 16 )).toString(16);
     var b = (Math.round( Math.random() * 16 )).toString(16);
     var color = "#" + r + g + b;
+
+    var backmarker = new L.CircleMarker( new L.LatLng(lat, lng), { color: "#000", fillColor: "#ccc", fillOpacity: 0.9 } );
+    backmarker.bindPopup(name);
+    map.addLayer(backmarker);
     
-    var marker = new L.CircleMarker( new L.LatLng(lat, lng), { color: color, fillOpacity: 0.9 } );
+    var marker = new L.CircleMarker( new L.LatLng(lat, lng), { color: color, fillOpacity: 1 } );
     marker.bindPopup(name);
     map.addLayer(marker);
     
     stations[ id ] = {
+      back: backmarker,
       marker: marker,
       name: name,
       color: color,
-      capacities: [ ]
+      capacities: [ ],
+      startcount: null
     };
   }
   
@@ -64,10 +72,10 @@ $.get("data/stations.csv", function(station_csv){
     capacity_data = null;
     
     
-    var viewday = gup("day") || "2012/06/29";
+    var viewday = gup("day") || "2012/04/25";
     viewday = viewday.replace("-","/").replace("-","/");
-    var dt_min = 1 * ( new Date( viewday + " 00:00:00-04" ) );
-    var dt_max = 1 * ( new Date( viewday + " 23:59:59-04" ) );
+    dt_min = 1 * ( new Date( viewday + " 00:00:00-04" ) );
+    dt_max = 1 * ( new Date( viewday + " 23:59:59-04" ) );
     
     $("#timeline").slider({
       orientation: "horizontal",
@@ -128,28 +136,64 @@ $.get("data/stations.csv", function(station_csv){
       trips_data = null;
       
       updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
-      $(".loading").css({ display: "none" });
-
+      
+      $.get("data/bikecounts/" + csvday.substring(0,7) + ".csv", function(counts_csv){
+        var counts_data = $.csv.toArrays(counts_csv);
+        
+        for(var c=0;c<counts_data.length;c++){
+          var station_id = counts_data[c][1];
+          
+          if((! stations[station_id] ) || ( stations[station_id].startcount )){
+            continue;
+          }
+          
+          var at_day = counts_data[c][0].replace("/","-").replace("/","-");
+          if(at_day == csvday){
+            var bikes = counts_data[c][2];
+            stations[station_id].startcount = bikes;
+          }
+        }
+        
+        counts_csv = null;
+        counts_data = null;
+        
+        updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
+        
+        $(".loading").css({ display: "none" });
+      });
     });
   });
 });
 
 
 var sizedOnce = false;
+var sizeByCount = false;
 
 function updateView(dt){
 
   $("#day").text( moment(dt + 4 * 60 * 60 * 1000 ).format('MMMM D, YYYY -- h:mm:ss a') );
 
-  if(!sizedOnce){
-    for(station_id in stations){
-      var count = lookUpCapacity(stations[ station_id ], dt);
-      stations[ station_id ].marker.setRadius( Math.floor( count * 2/3 ) );
+  for(station_id in stations){
+    if(!sizedOnce){
+      var capacity = lookUpCapacity(stations[ station_id ], dt);
+      stations[ station_id ].back.setRadius( Math.floor( capacity * 2/3 ) );
+      stations[ station_id ].marker.setRadius( Math.floor( capacity * 2/3 ) );
     }
+    stations[ station_id ].count = stations[ station_id ].startcount;
+  }
+  if(!sizedOnce){
     sizedOnce = true;
   }
   
   for(trip_id in trips){
+    // adjust station counts
+    if(trips[trip_id].start > dt_min && trips[trip_id].start < dt){
+      stations[ trips[trip_id].station_id ].count--;
+    }
+    if(trips[trip_id].end < dt){
+      stations[ trips[trip_id].dest_id ].count++;
+    }
+
     if(trips[trip_id].start < dt && trips[trip_id].end > dt){
       // trip in progress!
       
@@ -175,6 +219,14 @@ function updateView(dt){
       trips[trip_id].marker = null;
     }
   }
+
+  for(station_id in stations){
+    if(stations[ station_id ].startcount !== null){
+      //console.log("radius set to " + stations[ station_id ].count / stations[ station_id ].startcount * 100 + "percent")
+      stations[ station_id ].marker.setRadius( Math.max(0, Math.floor( stations[ station_id ].count * 2/3 ) ) );
+    }
+  }
+
 }
 
 function lookUpCapacity(station, datetime){

@@ -17,6 +17,6 @@ data/TripSplitter.py. Active bike CSVs include bike rentals for that day, and bi
 <img src="http://i.imgur.com/90MVz5r.png"/>
 
 <h3>(2) Trips of the Day</h3>
-<a href="http://mapmeld.github.io/boston-bikes/share.html?day=6-22-2012">Trips of the Day Timeline</a>
+<a href="http://mapmeld.github.io/boston-bikes/share.html?day=4-22-2012">Trips of the Day Timeline</a>
 <br/>
-<img src="http://i.imgur.com/LvWWbvb.png"/>
+<img src="http://i.imgur.com/3lG7U3F.png"/>
