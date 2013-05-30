@@ -81,7 +81,7 @@ $.get("data/stations.csv", function(station_csv){
 function updateView(dt){
 
   var myd = new Date(dt);
-  $("#day").text( a.toDateString().substring(4) );
+  $("#day").text( myd.toDateString().substring(4) );
   $("#shares").attr("href", "share.html?day=" + (myd.getMonth()+1) + "-" + myd.getDate() + "-" + myd.getFullYear() );
 
   for(station_id in stations){
