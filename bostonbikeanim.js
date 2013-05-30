@@ -74,8 +74,8 @@ $.get("data/stations.csv", function(station_csv){
     
     var viewday = gup("day") || "2012/04/25";
     viewday = viewday.replace("-","/").replace("-","/");
-    dt_min = 1 * ( new Date( viewday + " 00:00:00-04" ) );
-    dt_max = 1 * ( new Date( viewday + " 23:59:59-04" ) );
+    dt_min = 1 * ( new Date( viewday + " 00:00:00 GMT-0400" ) );
+    dt_max = 1 * ( new Date( viewday + " 23:59:59 GMT-0400" ) );
     
     $("#timeline").slider({
       orientation: "horizontal",
@@ -90,7 +90,7 @@ $.get("data/stations.csv", function(station_csv){
       }
     });
     
-    updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
+    updateView( 1 * ( new Date( viewday + " 08:00:00 GMT-0400" ) ) );
     
     var csvday = viewday.split("/");
     var year = csvday[2];
@@ -109,8 +109,18 @@ $.get("data/stations.csv", function(station_csv){
       var trips_data = $.csv.toArrays(trips_csv);
 
       for(var t=1;t<trips_data.length;t++){
-        var start = 1 * ( new Date( trips_data[t][3].replace("-","/").replace("-","/") ) );
-        var end = 1 * ( new Date( trips_data[t][5].replace("-","/").replace("-","/") ) );
+        var start = trips_data[t][3].replace("-","/").replace("-","/");
+        if(start.lastIndexOf("-04") == start.length - 3){
+          start = start.substring(0, start.length-3) + " GMT-0400";
+        }
+        start = 1 * ( new Date( start ) );
+        
+        var end = trips_data[t][5].replace("-","/").replace("-","/");
+        if(end.lastIndexOf("-04") == end.length - 3){
+          end = end.substring(0, end.length-3) + " GMT-0400";
+        }
+        end = 1 * ( new Date( end ) );
+        
         if(((start > dt_min) && (start < dt_max)) || ((end > dt_min) && (end < dt_max))){
           // notice this trip
           var trip_id = trips_data[t][0];
@@ -135,7 +145,7 @@ $.get("data/stations.csv", function(station_csv){
       trips_csv = null;
       trips_data = null;
       
-      updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
+      updateView( 1 * ( new Date( viewday + " 08:00:00 GMT-0400" ) ) );
       
       $.get("data/bikecounts/" + csvday.substring(0,7) + ".csv", function(counts_csv){
         var counts_data = $.csv.toArrays(counts_csv);
@@ -157,7 +167,7 @@ $.get("data/stations.csv", function(station_csv){
         counts_csv = null;
         counts_data = null;
         
-        updateView( 1 * ( new Date( viewday + " 08:00:00-04" ) ) );
+        updateView( 1 * ( new Date( viewday + " 08:00:00 GMT-0400" ) ) );
         
         $(".loading").css({ display: "none" });
       });
