@@ -8,6 +8,7 @@ map.addLayer(tonerLayer);
 map.attributionControl.setPrefix('');
 
 var stations = {};
+var gapstart, gapend, gaplength;
 
 $.get("data/stations.csv", function(station_csv){
   var station_data = $.csv.toArrays(station_csv);
@@ -60,12 +61,16 @@ $.get("data/stations.csv", function(station_csv){
     capacity_csv = null;
     capacity_data = null;
     
+    gapstart = new Date("2011/12/01 00:00:00 GMT-0400");
+    gapend = new Date("2012/03/14 00:00:00 GMT-0400");
+    gaplength = (1 * gapend) - (1 * gapstart);
+    
     $("#timeline").slider({
       orientation: "horizontal",
       range: "min",
       // min and max from when trips and station capacity CSVs overlap
       min: 1 * ( new Date( "2011/08/23 04:08:00 GMT-0400" ) ),
-      max: 1 * ( new Date( "2012/04/30 20:32:00 GMT-0400" ) ),
+      max: 1 * ( new Date( "2012/04/30 20:32:00 GMT-0400" ) ) - gaplength,
       value: 1 * ( new Date( "2011/08/23 00:08:00 GMT-0400" ) ),
       slide: function(event, ui){
         var dt = ui.value;
@@ -79,6 +84,10 @@ $.get("data/stations.csv", function(station_csv){
 });
 
 function updateView(dt){
+
+  if(dt > gapstart){
+    dt += gaplength;
+  }
 
   var myd = new Date(dt);
   $("#day").text( myd.toDateString().substring(4) );
